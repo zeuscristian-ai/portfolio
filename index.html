@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zeuscristian Portfolio</title>
+<meta name="description" content="Portfolio de Zeuscristian, généré à partir de ses données GitHub.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Audiowide&family=Lexend:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #100f09;
+  --surface: #191710;
+  --surface-2: #211f17;
+  --line: #2e2b21;
+  --text: #e7e6e4;
+  --muted: #9e9c94;
+  --faint: #6c6a61;
+  --accent: #b9a55a;
+  --accent-soft: rgba(185, 165, 90, .18);
+  --c0: #24221b;
+  --c1: #3f3c32;
+  --c2: #6a675b;
+  --c3: #a6a397;
+  --c4: #f2f0e8;
+  --display: "Audiowide", "Impact", system-ui, sans-serif;
+  --body: "Lexend", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f3ef;
+  --surface: #ebe9e2;
+  --surface-2: #e2dfd6;
+  --line: #d3cfc3;
+  --text: #1b1a14;
+  --muted: #5d5b53;
+  --faint: #8a877c;
+  --accent: #7d6b1f;
+  --accent-soft: rgba(125, 107, 31, .14);
+  --c0: #e1ded5;
+  --c1: #c4c0b3;
+  --c2: #938f82;
+  --c3: #5c594f;
+  --c4: #1b1a14;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 15px/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+  padding-inline: 16px;
+  transition: background-color .3s, color .3s;
+}
+a { color: inherit; }
+img { max-width: 100%; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+[hidden] { display: none !important; }
+
+.wrap { max-width: 1040px; margin-inline: auto; padding-block: 56px 72px; display: grid; gap: 64px; }
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed; top: calc(14px + env(safe-area-inset-top, 0px)); right: 14px; z-index: 10;
+  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid transparent; background: transparent; color: var(--muted); cursor: pointer;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--line); background: var(--surface); }
+.theme-toggle svg { width: 18px; height: 18px; }
+
+/* Hero */
+.hero { display: grid; justify-items: center; text-align: center; gap: 18px; }
+.avatar {
+  width: 148px; height: 148px; border-radius: 50%; overflow: hidden;
+  background: var(--surface-2); border: 3px solid var(--line);
+  box-shadow: 0 0 0 8px var(--accent-soft);
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.name {
+  margin: 8px 0 0; font: 400 clamp(2.4rem, 8vw, 4.6rem)/1.02 var(--display);
+  letter-spacing: .01em; text-wrap: balance;
+}
+.handle { font: 400 .85rem var(--mono); color: var(--faint); margin-top: -8px; }
+.role { margin: 0; font-weight: 500; font-size: 1.15rem; letter-spacing: .02em; color: var(--muted); }
+.role strong { color: var(--text); font-weight: 600; }
+.bio strong { font-weight: 500; color: var(--text); }
+.bio { margin: 0; max-width: 36rem; font-style: italic; font-weight: 300; color: var(--muted); text-wrap: balance; }
+.links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px; margin-top: 6px; }
+.links a {
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+  font-size: .95rem; color: var(--text); padding: 6px 2px; border-bottom: 1px solid transparent;
+}
+.links a:hover { border-bottom-color: var(--accent); }
+.links svg { width: 17px; height: 17px; flex: none; }
+
+/* Stats row */
+.stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; font-size: .88rem; color: var(--muted); }
+.stats b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Contributions */
+.contrib { display: grid; gap: 14px; justify-items: center; }
+.contrib-head { margin: 0; font-weight: 300; color: var(--muted); font-size: 1rem; }
+.contrib-head b { font: 400 1.9rem var(--display); color: var(--text); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.graph-scroll { width: 100%; overflow-x: auto; padding-bottom: 4px; }
+.graph { width: max-content; margin-inline: auto; display: grid; gap: 6px; }
+.months { position: relative; height: 18px; font-size: .78rem; color: var(--muted); }
+.months span { position: absolute; top: 0; }
+.cells { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 11px); grid-auto-columns: 11px; gap: 3px; }
+.cell { border-radius: 2px; background: var(--c0); }
+.cell[data-l="1"] { background: var(--c1); }
+.cell[data-l="2"] { background: var(--c2); }
+.cell[data-l="3"] { background: var(--c3); }
+.cell[data-l="4"] { background: var(--c4); }
+.cell.pad { background: transparent; }
+.graph-foot { display: flex; justify-content: space-between; gap: 16px; font-size: .78rem; color: var(--muted); }
+.legend { display: inline-flex; align-items: center; gap: 3px; }
+.legend i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+.legend span { margin-inline: 4px; }
+.contrib-note { margin: 0; font-size: .75rem; color: var(--faint); max-width: 28rem; text-align: center; }
+
+/* Tabs & filters */
+.work { display: grid; gap: 28px; }
+.tabs { display: flex; gap: 32px; flex-wrap: wrap; }
+.tab {
+  background: none; border: 0; padding: 0 0 6px; cursor: pointer;
+  font: 600 1.35rem var(--body); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--faint); border-bottom: 2px solid transparent;
+}
+.tab:hover { color: var(--muted); }
+.tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--text); }
+.tab sup { font: 500 .7rem var(--mono); margin-left: 4px; letter-spacing: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: 400 .85rem var(--body); color: var(--muted); background: transparent;
+  border: 1px solid transparent; border-radius: 4px; padding: 5px 12px; cursor: pointer;
+}
+.chip:hover { color: var(--text); }
+.chip[aria-pressed="true"] { color: var(--text); background: var(--surface-2); border-color: var(--line); }
+
+/* Timeline */
+.year { display: grid; gap: 30px; }
+.year-head { display: flex; align-items: center; gap: 14px; }
+.year-head .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--faint); display: grid; place-items: center; flex: none; }
+.year-head .dot::after { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--faint); }
+.year-head h2 { margin: 0; font: 600 1.25rem var(--body); font-variant-numeric: tabular-nums; }
+.year-head hr { flex: 1; border: 0; border-top: 1px solid var(--line); margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 44px 34px; align-items: start; padding-inline: 12px; }
+
+/* Card */
+.card { display: grid; gap: 12px; position: relative; }
+.card:has(.stretch) { cursor: pointer; }
+.stretch::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.card .actions a { position: relative; z-index: 2; }
+.card:has(.stretch:focus-visible) { outline: 2px solid var(--accent); outline-offset: 8px; }
+.stretch:focus-visible { outline: none; }
+.cover {
+  position: relative; aspect-ratio: 1 / 1; max-width: 100%;
+  background: var(--surface); overflow: hidden; display: grid; place-items: center;
+  text-decoration: none;
+}
+.cover canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; transition: opacity .35s; }
+.cover .initials { position: relative; font: 400 3.4rem var(--display); color: var(--faint); letter-spacing: .04em; transition: color .35s; }
+.card:hover .cover canvas, .card:focus-within .cover canvas { opacity: .9; }
+.card:hover .cover .initials { color: var(--text); }
+.cover .live {
+  position: absolute; top: 10px; left: 10px; font: 500 .7rem var(--mono); text-transform: uppercase; letter-spacing: .08em;
+  background: var(--bg); color: var(--text); padding: 3px 8px; border-radius: 3px; display: inline-flex; align-items: center; gap: 6px;
+}
+.cover .live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #5fbf6b; }
+.cover .live.private::before { background: var(--accent); border-radius: 1px; }
+.card h3 .h-private { border-bottom: 2px solid var(--line); padding-bottom: 2px; }
+.tags { display: flex; flex-wrap: wrap; font-size: .8rem; font-weight: 600; }
+.tags span + span::before { content: ""; display: inline-block; width: 1px; height: .9em; background: var(--line); margin: 0 8px; vertical-align: -1px; }
+.card h3 { margin: 0; font: 600 1.2rem/1.3 var(--body); }
+.card h3 a { text-decoration: none; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+.card h3 a:hover { color: var(--accent); }
+.meta { font-size: .75rem; color: var(--faint); font-variant-numeric: tabular-nums; margin-top: -4px; }
+.status { font-size: .85rem; color: var(--muted); font-weight: 300; }
+.desc { margin: 0; font-size: .9rem; color: var(--text); opacity: .9; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.desc.empty { color: var(--faint); font-style: italic; opacity: 1; }
+.stack { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .85rem; padding-left: 8px; }
+.stack span { display: inline-flex; align-items: center; gap: 7px; }
+.stack i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.stack small { color: var(--faint); font: 400 .72rem var(--mono); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px 18px; font: 500 .78rem var(--mono); }
+.actions a { color: var(--muted); text-decoration: none; }
+.actions a:hover { color: var(--text); }
+.actions .stars { color: var(--faint); }
+
+.empty-state { color: var(--faint); font-style: italic; padding: 24px 12px; }
+.source { text-align: center; font-size: .75rem; color: var(--faint); display: grid; gap: 4px; }
+.source a { color: var(--muted); }
+
+@media (max-width: 560px) {
+  .wrap { padding-block: 48px 56px; gap: 52px; }
+  .avatar { width: 120px; height: 120px; }
+  .grid { padding-inline: 0; gap: 40px; }
+  .tabs { gap: 22px; }
+  .tab { font-size: 1.1rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { transform: translateY(10px); } to { transform: none; } }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="theme-toggle" type="button" aria-label="Changer de thème">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+</button>
+
+<main class="wrap">
+  <header class="hero reveal">
+    <div class="avatar"><img id="avatar" alt="" width="148" height="148"></div>
+    <h1 class="name" id="name">Zeuscristian</h1>
+    <div class="handle" id="handle">@zeuscristian-ai</div>
+    <p class="role" id="role"></p>
+    <p class="bio" id="bio"></p>
+    <nav class="links" id="links" aria-label="Liens"></nav>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section class="contrib" aria-labelledby="contrib-title">
+    <p class="contrib-head" id="contrib-title"><b id="contrib-total">0</b>contributions cette année</p>
+    <div class="graph-scroll"><div class="graph" id="graph"></div></div>
+    <p class="contrib-note">Contributions sur GitHub, y compris celles faites dans des dépôts privés, affichées sans détail.</p>
+  </section>
+
+  <section class="work">
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="filters" id="filters" aria-label="Filtrer par catégorie"></div>
+    <div id="timeline" style="display:grid;gap:56px"></div>
+  </section>
+
+  <footer class="source" id="source"></footer>
+</main>
+
+<script id="snapshot" type="application/json">{"fetchedAt":"2026-09-28","user":{"login":"zeuscristian-ai","name":"Zeuscristian","avatar_url":"https://avatars.githubusercontent.com/u/200657948?v=4","html_url":"https://github.com/zeuscristian-ai","bio":null,"blog":"","location":null,"email":null,"twitter_username":null,"company":null,"public_repos":11,"followers":2,"following":3,"created_at":"2025-02-24T18:07:10Z"},"repos":[{"name":"Lottery-Algorithm","full_name":"zeuscristian-ai/Lottery-Algorithm","html_url":"https://github.com/zeuscristian-ai/Lottery-Algorithm","description":null,"homepage":null,"language":"Solidity","topics":[],"stargazers_count":0,"forks_count":0,"fork":false,"created_at":"2026-07-01T02:19:09Z","pushed_at":"2026-07-01T03:16:32Z","archived":false},{"name":"scaffold-eth-2","full_name":"zeuscristian-ai/scaffold-eth-2","html_url":"https://github.com/zeuscristian-ai/scaffold-eth-2","description":"Open source forkable Ethereum dev stack","homepage":"https://scaffoldeth.io","language":null,"topics":[],"stargazers_count":0,"forks_count":0,"fork":true,"created_at":"2026-06-30T16:01:50Z","pushed_at":"2026-06-30T10:41:12Z","archived":false},{"name":"Zenith-Communication-siteweb","full_name":"zeuscristian-ai/Zenith-Communication-siteweb","html_url":"https://github.com/zeuscristian-ai/Zenith-Communication-siteweb","description":null,"homepage":"https://zenith-communication-siteweb.vercel.app","language":"JavaScript","topics":[],"stargazers_count":1,"forks_count":0,"fork":false,"created_at":"2026-06-24T16:15:55Z","pushed_at":"2026-06-26T11:21:27Z","archived":false},{"name":"Solidity-Smart-Contract","full_name":"zeuscristian-ai/Solidity-Smart-Contract","html_url":"https://github.com/zeuscristian-ai/Solidity-Smart-Contract","description":null,"homepage":null,"language":null,"topics":[],"stargazers_count":0,"forks_count":0,"fork":true,"created_at":"2026-06-26T19:36:34Z","pushed_at":"2026-06-25T14:34:58Z","archived":false},{"name":"ToDo-supabase","full_name":"zeuscristian-ai/ToDo-supabase","html_url":"https://github.com/zeuscristian-ai/ToDo-supabase","description":"Just for fun","homepage":"https://to-do-supabase-five.vercel.app/","language":"JavaScript","topics":[],"stargazers_count":1,"forks_count":0,"fork":false,"created_at":"2026-06-13T20:42:08Z","pushed_at":"2026-06-14T08:46:01Z","archived":false},{"name":"Pulse-Base-de-donn-es","full_name":"zeuscristian-ai/Pulse-Base-de-donn-es","html_url":"https://github.com/zeuscristian-ai/Pulse-Base-de-donn-es","description":"Base de données PULSE","homepage":"https://pulse-base-de-donn-es.vercel.app","language":"Vue","topics":[],"stargazers_count":0,"forks_count":0,"fork":false,"created_at":"2026-05-28T22:29:51Z","pushed_at":"2026-05-30T19:40:01Z","archived":false},{"name":"full-stack-web3-cu","full_name":"zeuscristian-ai/full-stack-web3-cu","html_url":"https://github.com/zeuscristian-ai/full-stack-web3-cu","description":null,"homepage":null,"language":null,"topics":[],"stargazers_count":0,"forks_count":0,"fork":true,"created_at":"2026-06-26T19:34:12Z","pushed_at":"2025-09-02T18:43:11Z","archived":false},{"name":"remix-fund-me-cu","full_name":"zeuscristian-ai/remix-fund-me-cu","html_url":"https://github.com/zeuscristian-ai/remix-fund-me-cu","description":null,"homepage":null,"language":null,"topics":[],"stargazers_count":0,"forks_count":0,"fork":true,"created_at":"2026-06-29T20:23:42Z","pushed_at":"2024-09-04T14:46:45Z","archived":false},{"name":"remix-storage-factory-cu","full_name":"zeuscristian-ai/remix-storage-factory-cu","html_url":"https://github.com/zeuscristian-ai/remix-storage-factory-cu","description":null,"homepage":null,"language":null,"topics":[],"stargazers_count":0,"forks_count":0,"fork":true,"created_at":"2026-06-29T12:42:10Z","pushed_at":"2024-09-03T16:49:21Z","archived":false},{"name":"remix-simple-storage-cu","full_name":"zeuscristian-ai/remix-simple-storage-cu","html_url":"https://github.com/zeuscristian-ai/remix-simple-storage-cu","description":null,"homepage":null,"language":null,"topics":[],"stargazers_count":1,"forks_count":0,"fork":true,"created_at":"2026-06-29T15:15:13Z","pushed_at":"2024-06-27T07:53:58Z","archived":false},{"name":"siteweb-PHP-MySQL-Google-","full_name":"zeuscristian-ai/siteweb-PHP-MySQL-Google-","html_url":"https://github.com/zeuscristian-ai/siteweb-PHP-MySQL-Google-","description":null,"homepage":null,"language":null,"topics":[],"stargazers_count":0,"forks_count":0,"fork":true,"created_at":"2026-07-15T21:09:38Z","pushed_at":"2024-06-10T10:03:01Z","archived":false}],"languages":{"Lottery-Algorithm":{"Solidity":1310},"Zenith-Communication-siteweb":{"JavaScript":40059,"CSS":37913,"Python":1519,"HTML":604},"ToDo-supabase":{"JavaScript":36807,"CSS":2389,"HTML":633},"Pulse-Base-de-donn-es":{"Vue":168536,"CSS":66434,"TypeScript":34385,"HTML":567}},"contributions":{"firstYear":2024,"total":608,"start":"2025-09-28","counts":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,3,1,8,0,0,0,0,3,65,32,102,24,3,1,6,0,0,2,23,15,0,3,0,5,0,6,12,2,0,0,3,1,0,22,1,0,0,0,0,0,0,26,13,1,11,6,3,0,0,3,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,2,24,1,0,30,2,1,0,0,0,0,1,0,0,0,0,0,0,12,5,7,0,8,0,3,1,4,7,3,6,1,1,26,0,0,0,5,1,1,5,1,1,0,1,0,10,7,2,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"levels":"000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000010000000001001000000000000000000000000001000000000000000010112000014444111001420101012100110310000004212110011200000000000001000141041100001000000211020111111114000111111010211001010000000000000000000"},"avatarData":"data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAPAA8AMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APSqcKQUvegBadSUo60AGKKWjFACilxQKWgA7UlMlmjgjMkrqijqWOKw7rxhpVu5UTGQjrsH9aAN+iuXj8daYyrvWVSTyAAcVeg8V6RcEBboKT/fBFAG1SU2ORJow8bBlIyCDTqAEpDS0UANIptONFADRRRiigAopKWgAFL3pKWgAopOlGaAHUtNFKKAHg07NMBpc0ARAUoopaAClFJSigBaWkpcZoAXIHesPXPE1tpEWAPMmPRQcYqp4s15dLtRDGVM79ieg9a8ovb6SSQ5bdnqSaANnV/El3qBbzrg7M52L0FYUl6z5CfqKgjhluH2opZj6Ctmz8PvJgztsHoOSaAMsTTDjH41Mkk/BJP5V1lrpFtbYIBYju5q6tvbgYMMXr90UAYmh+Jb3SJgB80RI3o3T8K9P0nVrfV7QTQHkcMp6qa4uTTrO5TY8KD0ZOCKr2gufDOoJdRM0tox2uD6e/8AjQB6XRTIZVmhSRCCrAEEGn0AJjikp1NNACUlKaSgBMUUtJQAUoptLQApNFJRQA6gcUgpaAHDmlzTaWgBtKKKWgApaSlHFAC1HPKsEDyscKikmpKwvGErw+G7lkzkjaSOwNAHleu6m+oX8k0rk7jwD2HasmCJ7u5WNR17+lEgM0gAOSa1dPtxBIHx1GDkUAaFrbw2MWFGX7tjmpxdkHg4qE5ZgMZqVY4k5kYZ9DQBZjuSxHU1bjkY9uKqxTQdF21YSZO2KALSMwPHSrSbZYzG4BRhgiqHnioW1ZIG24LH2oA7Lw6xisjZs24wn5T6qelbNcbourq10kjoVU/KWz2NdjnI4PBoAQ0hpxHFN5oASkpaSgBKSlpM0AFGaKKAFzSUUhoAUGnU2lB9qAHZpaaDTqAFooxS0AJS0UUALWH4uiM3hm8Azwu7j2rbqnrERl0a8RRktCwH5UAeH20BeQn0rZiixg+lZtnn7RjsDzW5EnG5uAKAK9xc/Z49o5c/pWTLJNKSd35VPey75iefwqqbuKD5ZHIPdU6/iaAIhcSwuMua1LS/LYGc1nXB8yJJBA5STlSGBOPpmpLCF1kHBA96AOhDu0RbBwBWPLd5uNue9dTYxrJbbcckYPFYGp+G5nmLxMSp7elAGvpUyMABs3Dur5P5V6NYyebYwvnqgzXlOnaTIkaRTRrhX37hgN+Y5r0fQ5l+zC3zyv3QfSgDXpKWkIoAbig0ppDQA2kxS0UAJ0NIKdRigBKMUUUAAoFLiigAp1NpaAJKKKWgBMUUtFACU7GRg9DSUooA8f8AEWmf2P4nljRSIZT5icYGD1H4GrksZFvwOoq5441FL7U/7PCiOS1YMsm3JORn8qgQ7rWMtySOtAGHLpjzsTuK/Sqv9hH7pYlQc4JzzW5PMIzgVCLn1oArW+liMAc4FSeRtmCIMmrH2kEcVTnvRaMSwIZuhoA3obqKzjVXYe9Wv7UtTEC7gDOM1wM15dXkw2LkDsDVtLC9ulCFiq9SA3JoA7UyIuGUho26EVbtbkxyK6Ngg5FYmi6dPbWxS5k3ZOQM5xWiIzG4wcigDuInEsKSD+IA0+q2m5Onw/7v9asmgBtJ3pfxpaAIzRTiKb3oAKSlpMUAFFFFABS0lLQAtLSUUASUtNooAWlpKOlAC0uaSlxQB5n46s3t/EH2wKdk0IOfccf4VEgb+zoM9TGCfrXaeLLAXulKduTE4J/3Twf6flXDQu4gaNjkI5Cn2/zmgDMuXO45qrvO6rN4vznFUs4NAFyEljVl445l2vgj3qhHJge9JNO7JtQ4Y0ASmS1t2IQ9OpNTQasFdsH5cdcVmW9nEhD3chY9di8D862be405OFtY/l6HbmgC1a63LJnbFK2B1CEitTTtRjv1ygIOcMpHQ1nLqyqMRqEHvxWpbSJLMjoACTkkDrQB2unf8eEP+7/WrJFVdMObCP8AH+dWzQA2m96U0lACUUhpKAFNFJRmgBaTFLmkoAKWkpRQAtFFLQA6ikpaAFopAaWgBRS5pKMUADos0bRuuVYYI9RXMyeDYIo7qWOeWWVl/dKeAuOce/pXUCnCgDxm+jKOVYEEdc1lScGuw8Z2f2TVHZRhJRvH49f1ri5nyTQA4PgVGZKj3U2gBWZ3PBNSRwTt0YjNPiVByx5qwtwidMUAWrLSHkKl5Sx9Ca6ixtjA6AnnFcvBqiIchiDWxpetiW/gVvu7hu5oA9Lso/Ks4kPULk1NUVrOtxEHXvUxoAaaaacaaRQA2kpTSUAJ3opaTFACUZpaTvQAopRSUUAOFLSUUAFBOBnOKTNU9UnW3sJGdtoOBmgCJ/EGnxTeVJKVb/dq1DqdnP8A6u4jJ9CcVykOzA+USKTnJ5p0mm2k2SFKE90OKAOzVgRkHI9qfmuDOjyx82mozRN78/yxTluvFNocRzw3SD1Iz+uKAO7BpQa4uPxPrcP/AB8aRvH/AEzB/wDr1ZTxtCn/AB9WFzD74/xxQBD49h3W1vLj1X/P615bOwDkV6P4i1+y1fTUS1MhZGywZcYrgrqBGYnac+woAoBx6013wM5pJICvRj+NRFHxywNACifng0hlJzjNJ5Wfr7VIlueOCeaAERmyQO3eun8N2twLyGaMBgWwR16deKy7LS5HlG5O1ejeHtBjitVnCks3GOnegDptPDeWpIGGGSAMVfIqOCMRx1IelADKQinGmmgBpFIadSUANxRS0UAJSYpaKAEopaXFABRiloxQBHmud8QSLcXEdqwLKOSAe9cTF4o1WGEKt7LjH8R3Y/Oqc2u3ssxke4cuf4iaAO6QqigbQBTvMHauBTXbwEkzOfqakXXrputw4/GgDuDLjvTDdbD1rijrd1/z3c/lUZ1e4PLTOR9aAO+W+4+9ThfnpxXn41qYLgSv+QqCTVJ25Mjn6tQBr6/4iSW8MMcSCKPjevVj3rK+0RTDKsD7VnSSiQ8qKgOVJK8fSgDUZQe1QPCCOmKgj1Bo+JBu96vQXME+MMufQ8GgCtHb/MMitixhC444psduGIxV2CHbjAoA1LOFSckA59a6O11DULaBUtrRJoh33YOawbUEVpnVLfSbNp7susW4Dcq5waANZNfuR/rtLmX1Kc1OviCyP+s82H/rpGRXOw+MtDnbaL3Ye29GH9K24pkmiWSNw8bDIZTkEUAXF1ewbpdxc+9Sre2z/duIj9GFZTWlsxLG3iJPUlBUf2Cz6i3jB+lAG4sit91gfoaXNc+bKAnhWQ/7DEU/yCoxHcXCfSTP86AN3NGawx9rUcX0n/AlBoEupK3F1Ew/2o8f1oA3M0lZQvL5BysEn0JX/GpBqbqP3lpIPdWDUAaVKKopqULdQ6/VamW7gPSVfxOKALOaWohIp5DA/jS7x6j86APCMnGPSo2p/b1NMPTpzQAw5xSdqdz6UpHFABklRQM96UDPFPAyaAGAUwjORU4XjFJs9qAK+3GKUDmpSuB0o24HTvQBBJCOu3g1Xa2IOVPWtJCG+U9DSeWUbHbsaAKcN5d233JGAz061o2/iK5jP7yNHH0waZ5O49KY1oDn5aANu38YxRjD2ZP+6/8A9arM3i/T7uzktprGVo5FKkFhXMmyGRxUiWa4Hy0ARRWkDTEqJWUnKhiOB746/pXe+HdYjtbMW0/youNmBwPauSijCY28Vahch+O9AHpSTLIodHDKehBp2e9cBDey2so2yMoPXacVrxa9dxkBtkq4zyMZH4UAdOT3FJmsqHXLeQfvFdD37itCG4hnXMUit7A80AS5paaBzTqAAUuaSigB2aCob7wB+oopRQAwwxt1UfhxSfZosY2nH1NTUtAHjWeKbt4pycqD7U7bxQBDjnpRgYz2p5FJjI6UAAAyKcKUDinAY6CgAAyKNuO1PC5pce1AEW32o2YqXbQV6+9AFUgg5qwo8yP/AGh0pCuBikjby35oAnhUDg9akKEcgZFKAGTcOfX2p0bZJU0AMC8ipBGGGaVkIPHSnxnDYoAiMZAwadEvzj1qdkyM80xRhhQA6ZSw4ogfcvlN1/hNSMMrVd1KncpxQAvmNE+1/unvTheTWr53Fk7HNOIE8RIHzAcj+tQdVMbcigC42qTuBJFcy8dV3niui0/xJFLEouRhuhZfX3FcK6NE5Kng1LDKzKyDOeooA9QhminQPE4ZfUVLXI6LqotJRHKf3UmAT/dPrXXA5HHSgBQOKcFpB1p9ABtpQKcCKdxQB4pbHdBGf9kVMRVWybNtEeoIro/DmkprerxWbu6KwZmZRk4AzQBiFcU6OEOctJHGo6lj/Tqa6rVfCMsGqrZWUhlkMAmCS4V+T93rya517KWFl8+GVVJ/u9fpmgBW0/MHnW8qzIOuBgj8KZDZzzqWjjJA79K2bWzvImdbbS5lAiMzmU7TsHfmmT215caVDfMkSW5m8pArHdux/KgDGKMrYZSp9CMUoHrXXp4PnN/JBe3qqkPlqZBl/mfhQBTLbwdLdF0WdQ63bW33SRwud2fTigDlCOnrQF7VLLCYZWjPVWIOKbtoAjK1WlG08cCroGajmjyuKAC0mB+RuQankjKN6+hrOQmNxj1rVgcXMezP+7QA1XB4anHr1pjLtOCMGlUnjmgCzG4IwwpClRg5PSplOaAFByMUhXINL07UnfFAEQGxty06SMMPNTv1FOI5+tMVijmgCpOvHTiqaMySqwOK1ZgJF6dKzJFw9AGi0m0Kw6EZrtPD2oG8szG5zJFgc9x2rhEw9v34q94d1BrbVo1Z/lZth+hoA9HBp4NRZpwNAEmcUoamZooA8P05j9kTnoSP1rpNH1eTS2uHhjRmmgaEls5UNjke/Fcxp/CMp6q549q0o5OMUAd7pXii3m8Ri+vibZBEsSiMblwPXjP5VdgnuLm18P2sVztM8ssrbvmwFOVGD6Y4Fefo1SLI0bB0Yqw6EHBFAHpN5cziHUVnIVY7B/LVmzJ8x6v6E4HA6VivaW0WiafptzqFrDKs7yy/vA23jocd+lcc8jyEszszMckk5JqLeRQB6NL4j0ltWvjNct5LPDLHJGhYOUAyv51U0zxbbWrsziZPMvmuJNgyNhUjB55OcVwm444p6nPNAFi6cTXUsiggMxIB7DNRhaRc8804H1oAawAGf1pmQRg8+9SEc5qNl54oAqyJz7Zp9vKY374zSyDrUJO08CgDadRNF5oHzDrVblTilsrna2M8HrmpbiPa2RyDyDQAxSTUqjAqucjuPwqRGPf8KAJwcjtQT04qNWyKcG9aAFIqNgeoqXgjNIR2oAhI69aqTR55q8VqvKvagCKE/Iy+1VIJMXwwauR/K4x1rLXMerlPRsfhQB6rpV8LuzQk/vFADj+tX91cZo979mukUnCuNrV1e+gC0HpwaqYkxTvNoA8YtTteTueDV1H557dqpQcTt6bfzq5nAFAFyN6sqvHNUI5AOQKvRPkYJFAEbDBpm3nPerjx7lyOvpVbGOoxQA3BzxSikzntxSqRQBIp7etOwc4pq9OKlHI4IzQAmM4prKAM8VJtFNI9TQBXdeDgdKqtx25q844PSqcnHFABHIVIx1rZtpBcQeUxGeorA5zk9Ku2c5WQYFAFmT5ZCpGPShWHcVbnUXEPmqBuA596zw5zjmgCcMMdcGnZyKhVuaeDkZzQA8S7GG7oalVgx4qs44zSLIU9x3NAFphg1A/zDAGKkEgYdeaaSO9AFfADDsfaqd1GF1eKQD/WICfqOP6VoMKrXSZaCX+4xB/H/wDVQBfVsKjDqK6yyvPtNpG5PzYw31rkE+5urX0ybywVB4PI+tAG6ZKb5x+lVDNxyahe4AoA80WQfawFPY1cUhhk1kwcXSe5Pf2rWQ5/H2oAlTr7VZifGKqAnH496mjbHOTx2oA1YmBFEsO7kYqtA4yCO/YVeRgR9aAKDLgYIpmMVfkjPPv3qs6bRQBGhOfTFWIzmq/Q8cVNGTjNAE2CcU0jjmlBz70p5PQZoAicZQ9aqSL2H41eZTjFVZMjOKAKTAg5I/WkR8MBkg9qklUhc8VBnDYPSgDasbna4BPHTFSXkCowkQfI3I9qyreUq47Ctq2mWWMxycqfXtQBQBxknpUinP1p1xCYm24Jx+tRKc9aAJPxqJumKkAyBxTGGCf50ARhioOCaXzWx1P5Uw+mMUvDDFADlkPTqDUn3oyvtkVWII71NE+CM9c0ATocxj0xVyzfAAHUVQBUblyODVi1kUtx0FAF6SYocE1A1zxnPNTfY5L2ZIoXVXPALdDVuPwheu2JbtVz/cTP8zQB/9k="}</script>
+<script>
+(() => {
+  // ------- Configuration -------
+  const GITHUB_USER = "zeuscristian-ai";
+  const CACHE_KEY = "gh-portfolio-" + GITHUB_USER;
+  const CACHE_TTL = 60 * 60 * 1000; // 1 h
+
+  // Couleurs officielles des langages (GitHub Linguist)
+  const LANG_COLORS = {
+    JavaScript: "#f1e05a", TypeScript: "#3178c6", Vue: "#41b883", Solidity: "#AA6746", CSS: "#663399",
+    HTML: "#e34c26", Python: "#3572A5", PHP: "#4F5D95", Dart: "#00B4AB", Java: "#b07219", Kotlin: "#A97BFF",
+    Go: "#00ADD8", Rust: "#dea584", Shell: "#89e051", "C#": "#178600", "C++": "#f34b7d", C: "#555555",
+    Swift: "#F05138", Ruby: "#701516", Svelte: "#ff3e00", Astro: "#ff5a03", SCSS: "#c6538c", Dockerfile: "#384d54",
+    React: "#61dafb", PostgreSQL: "#336791", Tailwind: "#38bdf8", Flutter: "#02569B", Firebase: "#ffca28", Supabase: "#3ecf8e", Django: "#44b78b"
+  };
+
+  // Catégories déduites (les topics GitHub sont prioritaires s'ils existent)
+  const CATEGORY_RULES = [
+    { tag: "web3",    test: r => r.langs.includes("Solidity") || /eth|web3|solidity|remix|smart|contract|lottery|fund-me|storage/i.test(r.name) },
+    { tag: "web",     test: r => r.langs.some(l => ["JavaScript","TypeScript","Vue","HTML","CSS","Svelte","Astro","PHP"].includes(l)) || /site|web/i.test(r.name) },
+    { tag: "backend", test: r => /supabase|php|mysql|api|server|backend|base-de-donn|database|db/i.test(r.name + " " + (r.description || "")) || r.langs.includes("Python") },
+    { tag: "data",    test: r => /base-de-donn|database|donn[ée]es|sql/i.test(r.name + " " + (r.description || "")) },
+    { tag: "mobile",  test: r => r.langs.some(l => ["Dart","Kotlin","Swift"].includes(l)) || /flutter|android|ios|mobile/i.test(r.name) },
+    { tag: "ia",      test: r => /\bai\b|ia|llm|gpt|agent|ml/i.test(r.name.replace(/-/g, " ")) }
+  ];
+
+  // Présentation du hero (remplace la bio générée ; laisser vide pour la générer depuis GitHub)
+  const HERO_BIO = "Développeur <strong>Frontend &amp; UI/UX</strong> depuis 2024, je conçois des applications web et mobiles avec " +
+    "<strong>Vue.js, JavaScript, TypeScript et Flutter</strong>. J’ai réalisé plusieurs projets personnels et professionnels en équipe, " +
+    "tout en développant mes compétences en <strong>API REST, IA et Web3</strong>.";
+  const HERO_ROLE = "Développeur Frontend &amp; UI/UX";
+
+  // Liens ajoutés à la main (en plus de ceux du profil GitHub)
+  const EXTRA_LINKS = [
+    { href: "https://www.linkedin.com/in/c6n/", label: "LinkedIn", icon: "linkedin" },
+    { href: "https://www.behance.net/zeuscristian", label: "Behance", icon: "behance" },
+    { href: "https://wa.me/22890217838", label: "+228 90 21 78 38", icon: "whatsapp" }
+  ];
+
+  // Projets privés : invisibles pour l'API publique, donc décrits ici à la main.
+  // Ajoute un objet par projet ; « commits » et « homepage » sont facultatifs.
+  const PRIVATE_PROJECTS = [
+    {
+      name: "DAV Website",
+      client: "David Eho",
+      role: "Développeur front-end",
+      description: "Portfolio de David Eho, monteur vidéo et motion designer : une expérience vidéo immédiate et rythmée qui mène à la prise de contact. Site traduit en français, contenus et vidéos de projets intégrés.",
+      stack: ["JavaScript", "HTML", "CSS"],
+      tags: ["web", "portfolio"],
+      status: "Terminé",
+      created_at: "2026-08-08",
+      pushed_at: "2026-08-31",
+      commits: 5,
+      homepage: null
+    },
+    {
+      name: "Solys",
+      owner: "kadjr01",
+      role: "Développeur mobile & API",
+      description: "Gestion d'établissement scolaire : vie académique, administrative et financière. App mobile Flutter par rôle (direction, enseignants, surveillants, parents) qui fonctionne aussi hors ligne.",
+      stack: ["Flutter", "Dart", "Python", "Django", "React"],
+      tags: ["mobile", "backend", "saas"],
+      status: "En cours",
+      created_at: "2026-08-25",
+      pushed_at: "2026-09-09",
+      commits: 4,
+      homepage: null
+    },
+    {
+      name: "SiteControl",
+      owner: "kadjr01",
+      role: "Développeur mobile & web",
+      description: "Contrôle et surveillance de chantiers BTP : rapports journaliers, procès-verbaux, preuves photo, points de contrôle et suivi de présence. App mobile Flutter pour le terrain, interface web React pour le suivi.",
+      stack: ["Flutter", "React", "TypeScript", "Python", "Django"],
+      tags: ["mobile", "web", "backend"],
+      status: "En production",
+      created_at: "2026-07-25",
+      pushed_at: "2026-09-07",
+      commits: 86,
+      homepage: null
+    },
+    {
+      name: "DriveClass",
+      owner: "kadjr01",
+      role: "Développeur front-end",
+      description: "Plateforme SaaS de gestion et de formation pour auto-écoles : landing, espace élève (cours vidéo, tests, suivi des séances), backoffice et console super-admin multi-écoles.",
+      stack: ["TypeScript", "Vue", "React", "PostgreSQL", "Tailwind"],
+      tags: ["web", "saas", "backend"],
+      status: "En cours",
+      created_at: "2026-08-01",
+      pushed_at: "2026-09-28",
+      commits: 18,
+      homepage: null
+    }
+  ];
+
+  const $ = id => document.getElementById(id);
+  const snapshot = JSON.parse($("snapshot").textContent);
+  const fmtDate = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  const fmtMonth = new Intl.DateTimeFormat("fr-FR", { month: "short" });
+  const nf = new Intl.NumberFormat("fr-FR");
+
+  // ------- Thème -------
+  const root = document.documentElement;
+  try { const t = localStorage.getItem("theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  $("theme-toggle").addEventListener("click", () => {
+    const next = root.dataset.theme === "light" ? "dark" : "light";
+    root.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch (e) {}
+  });
+
+  // ------- Chargement des données -------
+  async function getJSON(url, ms = 7000) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal, headers: { Accept: "application/vnd.github+json" } });
+      if (!res.ok) throw new Error(res.status + " " + url);
+      return await res.json();
+    } finally { clearTimeout(timer); }
+  }
+
+  async function fetchLive() {
+    const api = "https://api.github.com";
+    const [user, repos, contrib, allYears] = await Promise.all([
+      getJSON(`${api}/users/${GITHUB_USER}`),
+      getJSON(`${api}/users/${GITHUB_USER}/repos?per_page=100&sort=pushed`),
+      getJSON(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`).catch(() => null),
+      getJSON(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}`).catch(() => null)
+    ]);
+    const languages = {};
+    await Promise.all(repos.filter(r => !r.fork).map(r =>
+      getJSON(`${api}/repos/${GITHUB_USER}/${r.name}/languages`).then(l => { languages[r.name] = l; }).catch(() => {})
+    ));
+    const data = { fetchedAt: new Date().toISOString(), live: true, user, repos, languages, avatarData: snapshot.avatarData };
+    data.contributions = contrib ? {
+      total: contrib.total.lastYear,
+      start: contrib.contributions[0].date,
+      counts: contrib.contributions.map(d => d.count),
+      levels: contrib.contributions.map(d => d.level).join("")
+    } : { ...snapshot.contributions };
+    // Première année avec au moins une contribution (peut précéder la date de création du compte)
+    const active = allYears ? Object.entries(allYears.total).filter(([, n]) => n > 0).map(([y]) => +y) : [];
+    data.contributions.firstYear = active.length ? Math.min(...active) : snapshot.contributions.firstYear;
+    return data;
+  }
+
+  async function loadData() {
+    try {
+      const c = JSON.parse(sessionStorage.getItem(CACHE_KEY) || "null");
+      if (c && Date.now() - c.t < CACHE_TTL) return c.data;
+    } catch (e) {}
+    try {
+      const data = await fetchLive();
+      try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data })); } catch (e) {}
+      return data;
+    } catch (e) {
+      console.info("GitHub indisponible, affichage de l'instantané :", e.message);
+      return { ...snapshot, live: false };
+    }
+  }
+
+  // ------- Rendu -------
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const titleCase = s => s.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim().replace(/\b\w/g, c => c.toUpperCase());
+  const initials = s => titleCase(s).split(" ").filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+
+  const ICONS = {
+    github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>',
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.2-8.3L1.8 3h6.4l4.4 5.8L17.8 3Zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5Z"/></svg>',
+    linkedin: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg>',
+    behance: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 11.3c.9-.4 1.5-1.2 1.5-2.4C9.3 6.6 7.6 6 5.6 6H0v12.3h5.8c2.1 0 4.2-1 4.2-3.5 0-1.5-.8-2.9-2.2-3.5ZM2.5 8.1h2.5c.9 0 1.8.2 1.8 1.4 0 1-.7 1.4-1.6 1.4H2.5V8.1Zm2.8 8.1H2.5v-3.4h2.9c1.2 0 1.9.5 1.9 1.7 0 1.3-.9 1.7-2 1.7ZM15.9 9c-2.8 0-4.6 2-4.6 4.7 0 2.8 1.7 4.7 4.6 4.7 2.1 0 3.5-1 4.2-3.1h-2.1c-.3.8-1.2 1.2-2 1.2-1.6 0-2.4-.9-2.4-2.5h6.6c.1-2.8-1.4-5-4.3-5Zm-2.3 3.6c.1-1.2.9-1.9 2.2-1.9 1.3 0 1.9.8 2 1.9h-4.2ZM13.2 6.5h5.2v1.3h-5.2V6.5Z"/></svg>',
+    whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35ZM12.04 21.5h-.01a9.45 9.45 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.22 4.25-9.47 9.48-9.47a9.47 9.47 0 0 1 9.47 9.48c0 5.22-4.25 9.46-9.47 9.46Zm8.06-17.53A11.33 11.33 0 0 0 12.04.63C5.76.63.65 5.74.65 12.02c0 2 .52 3.96 1.52 5.69L.55 23.6l6.04-1.58a11.37 11.37 0 0 0 5.44 1.39h.01c6.28 0 11.39-5.11 11.39-11.39 0-3.04-1.19-5.9-3.33-8.05Z"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>'
+  };
+
+  function renderHero(d) {
+    const u = d.user;
+    const img = $("avatar");
+    img.alt = "Photo de profil de " + (u.name || u.login);
+    img.onerror = () => { img.onerror = null; img.src = d.avatarData; };
+    img.src = u.avatar_url ? u.avatar_url + (u.avatar_url.includes("?") ? "&" : "?") + "s=300" : d.avatarData;
+
+    $("name").textContent = u.name || u.login;
+    $("handle").textContent = "@" + u.login;
+    document.title = (u.name || u.login) + " — Portfolio";
+
+    // Langages dominants, pondérés par octets de code
+    const totals = {};
+    Object.values(d.languages || {}).forEach(l => Object.entries(l).forEach(([k, v]) => totals[k] = (totals[k] || 0) + v));
+    const top = Object.entries(totals).sort((a, b) => b[1] - a[1]).map(([k]) => k).filter(k => !["HTML","CSS"].includes(k)).slice(0, 3);
+    const since = Math.min(new Date(u.created_at).getFullYear(), d.contributions.firstYear || Infinity);
+    const years = new Date().getFullYear() - since;
+    const hasWeb3 = d.repos.some(r => r.language === "Solidity" || /eth|web3|solidity/i.test(r.name));
+    $("role").innerHTML = `<strong>${years >= 1 ? years + "+ an" + (years > 1 ? "s" : "") + " ·" : ""}</strong> ${HERO_ROLE || "Développeur " + (hasWeb3 ? "Web &amp; Web3" : "Full Stack")}`;
+
+    const originals = d.repos.filter(r => !r.fork).length;
+    const priv = PRIVATE_PROJECTS.length;
+    const plural = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+    if (HERO_BIO) $("bio").innerHTML = HERO_BIO;
+    else $("bio").textContent = u.bio ||
+      `Sur GitHub depuis ${since}, je construis des applications en ${top.join(", ").replace(/, ([^,]*)$/, " et $1")}` +
+      ` : ${plural(originals, "projet")} ${originals > 1 ? "personnels" : "personnel"}` +
+      (priv ? `, des contributions à ${plural(priv, "projet")} ${priv > 1 ? "privés" : "privé"} en équipe` : "") +
+      `${hasWeb3 ? " et une exploration des smart contracts Ethereum." : "."}`;
+
+    const links = [{ href: u.html_url, label: "GitHub", icon: "github" }];
+    if (u.blog) links.push({ href: /^https?:/.test(u.blog) ? u.blog : "https://" + u.blog, label: u.blog.replace(/^https?:\/\//, "").replace(/\/$/, ""), icon: "link" });
+    if (u.email) links.push({ href: "mailto:" + u.email, label: u.email, icon: "mail" });
+    if (u.twitter_username) links.push({ href: "https://x.com/" + u.twitter_username, label: "@" + u.twitter_username, icon: "x" });
+    links.push(...EXTRA_LINKS);
+    $("links").innerHTML = links.map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${ICONS[l.icon]}${esc(l.label)}</a>`).join("") +
+      (u.location ? `<span class="links-loc" style="display:inline-flex;gap:8px;align-items:center;color:var(--muted)">${ICONS.pin}${esc(u.location)}</span>` : "");
+
+    const stars = d.repos.reduce((s, r) => s + (r.stargazers_count || 0), 0);
+    $("stats").innerHTML = [
+      [u.public_repos, "dépôts publics"], ...(PRIVATE_PROJECTS.length ? [[PRIVATE_PROJECTS.length, PRIVATE_PROJECTS.length > 1 ? "projets privés" : "projet privé"]] : []), [stars, "étoiles"], [u.followers, "abonnés"]
+    ].map(([n, l]) => `<span><b>${nf.format(n)}</b> ${l}</span>`).join("");
+  }
+
+  function renderGraph(c) {
+    $("contrib-total").textContent = nf.format(c.total);
+    const start = new Date(c.start + "T00:00:00");
+    const lead = start.getDay(); // colonnes commençant le dimanche, comme sur GitHub
+    let cells = "", months = "";
+    for (let i = 0; i < lead; i++) cells += '<i class="cell pad"></i>';
+    let lastMonth = -1;
+    c.counts.forEach((n, i) => {
+      const day = new Date(start); day.setDate(start.getDate() + i);
+      const col = Math.floor((i + lead) / 7);
+      if (day.getDate() <= 7 && day.getMonth() !== lastMonth && col < Math.ceil((c.counts.length + lead) / 7) - 1) {
+        lastMonth = day.getMonth();
+        const m = fmtMonth.format(day).replace(".", "");
+        months += `<span style="left:${col * 14}px">${m.charAt(0).toUpperCase() + m.slice(1)}</span>`;
+      }
+      const label = `${n === 0 ? "Aucune" : n} contribution${n > 1 ? "s" : ""} le ${fmtDate.format(day)}`;
+      cells += `<i class="cell" data-l="${c.levels[i]}" title="${label}"></i>`;
+    });
+    $("graph").innerHTML = `
+      <div class="months">${months}</div>
+      <div class="cells" role="img" aria-label="${nf.format(c.total)} contributions sur les 12 derniers mois">${cells}</div>
+      <div class="graph-foot"><span>${nf.format(c.total)} contributions sur les 12 derniers mois</span>
+        <span class="legend"><span>Moins</span>${[0,1,2,3,4].map(l => `<i style="background:var(--c${l})"></i>`).join("")}<span>Plus</span></span></div>`;
+    // Faire défiler le graphique vers les mois récents sur mobile
+    const sc = document.querySelector(".graph-scroll"); sc.scrollLeft = sc.scrollWidth;
+  }
+
+  function enrich(d) {
+    const now = Date.now();
+    const privates = PRIVATE_PROJECTS.map(p => ({
+      ...p, private: true, html_url: null, fork: false,
+      langs: p.stack, langStats: p.stack.map(n => ({ name: n })),
+      year: new Date(p.created_at).getFullYear()
+    }));
+    return privates.concat(d.repos.map(r => {
+      const langMap = (d.languages || {})[r.name] || (r.language ? { [r.language]: 1 } : {});
+      const total = Object.values(langMap).reduce((a, b) => a + b, 0) || 1;
+      const langs = Object.entries(langMap).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ name: k, pct: Math.round(v / total * 100) }));
+      const repo = { ...r, langs: langs.map(l => l.name), langStats: langs };
+      const tags = (r.topics && r.topics.length) ? r.topics.slice(0, 4) : CATEGORY_RULES.filter(c => c.test(repo)).map(c => c.tag);
+      const days = (now - new Date(r.pushed_at)) / 864e5;
+      const status = r.archived ? "Archivé" : r.homepage ? "En ligne" : days < 90 ? "En cours" : "En pause";
+      return { ...repo, tags: tags.length ? tags : ["autre"], status, year: new Date(r.created_at).getFullYear() };
+    }));
+  }
+
+  function drawCover(canvas, seedStr, color) {
+    // Motif génératif déterministe : une empreinte de commits propre à chaque dépôt
+    let h = 2166136261;
+    for (const ch of seedStr) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+    const rand = () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)) >>> 0) / 4294967296;
+    const size = 280, cols = 14, cell = size / cols;
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    for (let y = 0; y < cols; y++) for (let x = 0; x < cols; x++) {
+      const v = rand();
+      const band = Math.abs(x - y * 0.7 - cols * 0.25) < 3.2 ? 0.35 : 0;
+      const a = v + band > 0.82 ? 0.5 : v + band > 0.62 ? 0.22 : 0.06;
+      ctx.fillStyle = color; ctx.globalAlpha = a;
+      ctx.fillRect(x * cell + 3, y * cell + 3, cell - 6, cell - 6);
+    }
+  }
+
+  function card(r) {
+    const main = r.langStats[0];
+    const color = main && LANG_COLORS[main.name] || "#9e9c94";
+    const stack = r.langStats.slice(0, 4).map(l =>
+      `<span><i style="background:${LANG_COLORS[l.name] || "#8a877c"}"></i>${esc(l.name)}${r.langStats.length > 1 && l.pct != null ? ` <small>${l.pct}%</small>` : ""}</span>`).join("");
+    const pushed = fmtDate.format(new Date(r.pushed_at));
+    if (r.private) {
+      const coverInner = `<canvas data-seed="${esc(r.name)}" data-color="${color}"></canvas>
+          <span class="initials">${esc(initials(r.name))}</span><span class="live private">Dépôt privé</span>`;
+      return `
+      <article class="card">
+        ${r.homepage ? `<a class="cover" href="${esc(r.homepage)}" target="_blank" rel="noopener" aria-label="Ouvrir ${esc(r.name)}">${coverInner}</a>` : `<div class="cover">${coverInner}</div>`}
+        <div class="tags">${r.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>
+        <h3><span class="h-private">${esc(r.name)}</span></h3>
+        <div class="meta">${r.year} · dernière contribution le ${pushed}</div>
+        <div class="status">${esc(r.status)} — ${esc(r.role)}</div>
+        <p class="desc">${esc(r.description)}</p>
+        ${stack ? `<div class="stack">${stack}</div>` : ""}
+        <div class="actions">
+          ${r.homepage ? `<a href="${esc(r.homepage)}" target="_blank" rel="noopener">Voir le projet ↗</a>` : ""}
+          <span class="stars">${[r.commits ? r.commits + " commits" : "", r.owner ? "avec " + esc(r.owner) : "", r.client ? "pour " + esc(r.client) : ""].filter(Boolean).join(" · ")}</span>
+        </div>
+      </article>`;
+    }
+    return `
+      <article class="card">
+        <div class="cover">
+          <canvas data-seed="${esc(r.name)}" data-color="${color}"></canvas>
+          <span class="initials">${esc(initials(r.name))}</span>
+          ${r.homepage ? '<span class="live">Démo en ligne</span>' : ""}
+        </div>
+        <div class="tags">${r.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>
+        <h3><a class="stretch" href="${esc(r.homepage || r.html_url)}" target="_blank" rel="noopener" title="${r.homepage ? "Ouvrir le site" : "Voir le code"}">${esc(titleCase(r.name))}</a></h3>
+        <div class="meta">${r.year} · mis à jour le ${pushed}</div>
+        <div class="status">${r.fork ? "Fork" : r.status} — ${r.tags.map(t => t[0].toUpperCase() + t.slice(1)).join(" · ")}</div>
+        <p class="desc${r.description ? "" : " empty"}">${esc(r.description || (r.fork ? "Dépôt forké pour apprendre et expérimenter." : "Pas encore de description sur GitHub."))}</p>
+        ${stack ? `<div class="stack">${stack}</div>` : ""}
+        <div class="actions">
+          <a href="${esc(r.html_url)}" target="_blank" rel="noopener">Code ↗</a>
+          ${r.homepage ? `<a href="${esc(r.homepage)}" target="_blank" rel="noopener">Démo ↗</a>` : ""}
+          ${r.stargazers_count ? `<span class="stars">★ ${r.stargazers_count}</span>` : ""}
+        </div>
+      </article>`;
+  }
+
+  let state = { tab: "projects", filter: "all" };
+  try { const s = JSON.parse(localStorage.getItem("gh-portfolio-view") || "null"); if (s) state = { ...state, ...s }; } catch (e) {}
+  if (["#forks", "#private"].includes(location.hash)) state.tab = location.hash.slice(1);
+
+  function renderWork(repos) {
+    const groups = { projects: repos.filter(r => !r.fork && !r.private), private: repos.filter(r => r.private), forks: repos.filter(r => r.fork) };
+    if (!groups[state.tab].length) state.tab = "projects";
+    const tabLabels = { projects: "Projets", private: "Privés", forks: "Forks" };
+    $("tabs").innerHTML = Object.keys(groups).filter(k => groups[k].length).map(k =>
+      `<button class="tab" role="tab" id="tab-${k}" data-tab="${k}" aria-selected="${state.tab === k}">${tabLabels[k]}<sup>${groups[k].length}</sup></button>`).join("");
+
+    const list = groups[state.tab];
+    const tags = [...new Set(list.flatMap(r => r.tags))].sort((a, b) => a.localeCompare(b, "fr"));
+    if (state.filter !== "all" && !tags.includes(state.filter)) state.filter = "all";
+    $("filters").innerHTML = ["all", ...tags].map(t =>
+      `<button class="chip" id="filter-${t}" data-filter="${t}" aria-pressed="${state.filter === t}">${t === "all" ? "Tous" : t[0].toUpperCase() + t.slice(1)}</button>`).join("");
+
+    const shown = list.filter(r => state.filter === "all" || r.tags.includes(state.filter))
+      .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+    const byYear = {};
+    shown.forEach(r => (byYear[r.year] ||= []).push(r));
+    const years = Object.keys(byYear).sort((a, b) => b - a);
+    $("timeline").innerHTML = years.length ? years.map(y => `
+      <div class="year">
+        <div class="year-head"><span class="dot"></span><h2>${y}</h2><hr></div>
+        <div class="grid">${byYear[y].map(card).join("")}</div>
+      </div>`).join("") : '<p class="empty-state">Aucun dépôt dans cette catégorie.</p>';
+    document.querySelectorAll(".cover canvas").forEach(c => drawCover(c, c.dataset.seed, c.dataset.color));
+    try { localStorage.setItem("gh-portfolio-view", JSON.stringify(state)); } catch (e) {}
+  }
+
+  function renderSource(d) {
+    const when = fmtDate.format(new Date(d.fetchedAt));
+    $("source").innerHTML = `<span>Toutes les données viennent de <a href="${esc(d.user.html_url)}" target="_blank" rel="noopener">github.com/${esc(d.user.login)}</a>.</span>
+      <span>${d.live ? "Chargées en direct depuis l'API GitHub" : "Instantané du " + when + " (API GitHub injoignable)"}</span>`;
+  }
+
+  function render(d) {
+    renderHero(d);
+    renderGraph(d.contributions);
+    const repos = enrich(d);
+    renderWork(repos);
+    renderSource(d);
+    $("tabs").onclick = e => { const b = e.target.closest("[data-tab]"); if (!b) return; state = { tab: b.dataset.tab, filter: "all" }; renderWork(repos); };
+    $("filters").onclick = e => { const b = e.target.closest("[data-filter]"); if (!b) return; state.filter = b.dataset.filter; renderWork(repos); };
+  }
+
+  // Affiche l'instantané immédiatement, puis remplace par les données en direct
+  render({ ...snapshot, live: false });
+  loadData().then(d => { if (d.live) render(d); });
+})();
+</script>
+</body>
+</html>
